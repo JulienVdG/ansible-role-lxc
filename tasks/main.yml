@@ -1,0 +1,34 @@
+---
+# tasks file for ansible-role-lxc
+
+- name: Install lxc
+  apt:
+    pkg: lxc
+    state: present
+
+- name: Configure lxc-net
+  # todo when lxc-net
+  template:
+    src: lxc-net.j2
+    dest: /etc/default/lxc-net
+    owner: root
+    group: root
+    mode: 0644
+  register: etc_default_lxc_net
+
+# TODO explicit start or use trigger ? or only explicit enable and trigger start?
+- name: Start lxc-net service
+  when: etc_default_lxc_net is changed
+  service:
+    name: lxc-net
+    state: restarted
+    enabled: yes
+
+- name: Configure lxc default.conf
+  template:
+    src: default.conf.j2
+    dest: /etc/lxc/default.conf
+    owner: root
+    group: root
+    mode: 0644
+
