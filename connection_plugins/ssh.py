@@ -1,4 +1,5 @@
 # Copyright 2016, Rackspace US, Inc.
+# Copyright 2019, Julien Viard de Galbert
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,6 +14,9 @@
 # limitations under the License.
 #
 # (c) 2016, Kevin Carter <kevin.carter@rackspace.com>
+#
+# Julien Viard de Galbert:
+#  - Allow nonroot connextion to host
 
 DOCUMENTATION = '''
     connection: ssh
@@ -400,6 +404,7 @@ class Connection(SSH.Connection):
     def exec_command(self, cmd, in_data=None, sudoable=True):
         """run a command on the remote host."""
 
+        cmd_need_root = False
         if self._container_check():
             # NOTE(hwoarang): the shlex_quote method is necessary here because
             # we need to properly quote the cmd as it's being passed as argument
@@ -425,10 +430,21 @@ class Connection(SSH.Connection):
                     self.container_user,
                     SSH.shlex_quote(cmd)
                 )
+                cmd_need_root = True
 
         elif self._chroot_check():
             chroot_command = 'chroot %s' % self.chroot_path
             cmd = '%s %s' % (chroot_command, cmd)
+            cmd_need_root = True
+
+        # NOTE(jvdg): Allow nonroot connextion to host:
+        # force 'become' before calling lxc-attach
+        # TODO: check with become_user != root
+        if cmd_need_root and self._play_context.remote_user != 'root':
+            _wasbecome = self._play_context.become
+            self._play_context.become = True
+            cmd = self._play_context.make_become_cmd(cmd)
+            self._play_context.become = _wasbecome
 
         return super(Connection, self).exec_command(cmd, in_data, sudoable)
 
