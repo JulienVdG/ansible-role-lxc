@@ -5,6 +5,7 @@
   apt:
     pkg: lxc
     state: present
+  tags: lxc-setup
 
 - name: Configure lxc-net
   # todo when lxc-net
@@ -15,6 +16,7 @@
     group: root
     mode: 0644
   register: etc_default_lxc_net
+  tags: lxc-setup
 
 # TODO explicit start or use trigger ? or only explicit enable and trigger start?
 - name: Start lxc-net service
@@ -23,6 +25,7 @@
     name: lxc-net
     state: restarted
     enabled: yes
+  tags: lxc-setup
 
 - name: Configure lxc default.conf
   template:
@@ -31,4 +34,28 @@
     owner: root
     group: root
     mode: 0644
+  tags: lxc-setup
 
+  #- name: Find this host containers' group
+  #  set_fact:
+  #    lxc_group_name: "{{ group_names | map('regex_search', '^'+lxc_group_prefix+'.*$') | select | list | join('') }}"
+
+  #- vars:
+  #    lxc_group_name: "{{ group_names | map('regex_search', '^'+lxc_group_prefix+'.*$') | select | list | join('') }}"
+  #  when: lxc_group_name != ''
+  #  block:
+  #  - name: list host containers
+  #    debug:
+  #      msg: '{% set lxclist=[] -%} {%- for lxc_host in groups[lxc_group_name] -%} {%- if hostvars[lxc_host].get("physical_host", "") == ansible_host and hostvars[lxc_host]["container_name"] is defined -%} {{ lxclist.append(lxc_host) }} {%- endif -%} {%- endfor%}{{lxclist | list}}'
+  #
+
+- vars:
+    lxc_group_name: "{{ group_names | map('regex_search', '^'+lxc_group_prefix+'.*$') | select | list | join('') }}"
+  when: lxc_group_name != ''
+  block:
+  - name: create containers
+    with_items: '{% set lxclist=[] -%} {%- for lxc_host in groups[lxc_group_name] -%} {%- if hostvars[lxc_host].get("physical_host", "") == ansible_host and hostvars[lxc_host]["container_name"] is defined -%} {{ lxclist.append(lxc_host) }} {%- endif -%} {%- endfor%}{{lxclist | list}}'
+    loop_control:
+      loop_var: lxc_host
+    include_tasks: create-container.yml
+  tags: lxc-create

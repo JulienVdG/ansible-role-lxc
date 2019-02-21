@@ -1,0 +1,15 @@
+---
+# defaults file for ansible-role-lxc
+lxc_group_prefix: "host-"
+lxc_template: "debian"
+lxc_template_options:
+  debian: "--release stretch --packages=sudo,python3"
+# the variable {{ cn }} is set to the container name
+lxc_container_config:
+  debian:
+    - lxc.network.veth.pair = {{ hostvars[lxc_host].get("lxc_vethpair", "veth"+cn) }}
+    - lxc.console.logfile = /var/log/lxc/{{ cn }}.console
+    - lxc.autodev = 1
+    - lxc.kmsg = 0
+    - lxc.start.auto = 1
+    - lxc.start.order = 100

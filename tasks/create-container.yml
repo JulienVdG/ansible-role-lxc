@@ -1,0 +1,19 @@
+---
+# tasks file for ansible-role-lxc
+
+- name: Create a started container
+  vars:
+    - cn : '{{ hostvars[lxc_host]["container_name"] }}'
+    - t: '{{ hostvars[lxc_host].get("lxc_template", lxc_template) }}'
+    - to: '{{ hostvars[lxc_host].get("lxc_template_options", lxc_template_options.get(t, "")) }}'
+    - cc: '{{ hostvars[lxc_host].get("lxc_container_config", lxc_container_config.get(t, [])) }}'
+  #debug:
+  #  msg: 'name: {{ cn }}, t: {{ t }}, to: {{ to }}, cc: {{ cc }}'
+  lxc_container:
+    name: '{{ cn }}'
+    container_log: true
+    template: '{{ t }}'
+    state: started
+    template_options: '{{ to }}'
+    container_config: '{{ cc }}'
+    container_log_level: DEBUG
