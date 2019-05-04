@@ -1,0 +1,16 @@
+galaxy_info:
+  author: Julien Viard de Galbert
+  description: Ansible role for lxc setup and containers management through ssh connection
+  license: Apache2
+  # untested with older version so
+  min_ansible_version: 2.7.7
+  platforms:
+  - name: Debian
+    versions:
+    - stretch
+  galaxy_tags:
+    - linux
+    - ssh
+    - lxc
+    - container
+    - containers
