@@ -1,0 +1,12 @@
+[lxc-hosts]
+# here list all hosts where to setup lxc
+testvm
+
+[lxchost-testvm]
+# have a group per host to configure all the containers running on the host
+testvm #the host itself is in the group as is share the ssh params
+# the containers must have the container_name set
+mycontainer1 container_name=mycontainer1 lxc_vethpair=vethmyc1
+appserver1 container_name=appserver1
+webserver1 container_name=webserver1
+

@@ -1,0 +1,5 @@
+---
+- hosts: lxc-hosts
+  become: yes
+  roles:
+    - { role: ansible-role-lxc }
