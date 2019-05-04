@@ -1,6 +1,19 @@
 ---
 # defaults file for ansible-role-lxc
-lxc_group_prefix: "host-"
+lxc_bridge_name: lxcbr0
+
+lxc_net_enable: true
+lxc_net:
+  bridge: '{{ lxc_bridge_name }}'
+  address: 10.0.3.1
+  netmask: 255.255.255.0
+  network: 10.0.3.0/24
+  dhcp_range: 10.0.3.2,10.0.3.254
+  dhcp_max: 253
+  dhcp_confile: ""
+  domain: ""
+
+lxc_group_prefix: "lxchost-"
 lxc_template: "debian"
 lxc_template_options:
   debian: "--release stretch --packages=sudo,python3"

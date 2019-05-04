@@ -5,10 +5,24 @@
   apt:
     pkg: lxc
     state: present
+  register: lxc_install_register
+  tags: lxc-setup
+
+- name: Get version
+  shell: 'lxc-info --version'
+  when: lxc_install_register is changed or lxc_current_version is undefined
+  register: lxc_version_register
+  tags: lxc-setup
+
+- name: Set version fact
+  when: lxc_version_register is changed
+  set_fact:
+    lxc_current_version: '{{ lxc_version_register.stdout }}'
+    cacheable: yes
   tags: lxc-setup
 
 - name: Configure lxc-net
-  # todo when lxc-net
+  when: lxc_net_enable
   template:
     src: lxc-net.j2
     dest: /etc/default/lxc-net

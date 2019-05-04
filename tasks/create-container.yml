@@ -1,7 +1,7 @@
 ---
 # tasks file for ansible-role-lxc
 
-- name: Create a started container
+- name: 'Create a started container : {{ cn }} as {{ t }}'
   vars:
     - cn : '{{ hostvars[lxc_host]["container_name"] }}'
     - t: '{{ hostvars[lxc_host].get("lxc_template", lxc_template) }}'
