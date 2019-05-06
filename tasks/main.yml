@@ -15,7 +15,9 @@
 
 - name: Install lxc
   apt:
-    pkg: lxc
+    pkg:
+      - lxc
+      - python3-lxc
     state: present
   register: lxc_install_register
   tags: lxc-setup

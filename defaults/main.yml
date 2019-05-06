@@ -33,9 +33,14 @@ lxc_template_options:
 # the variable {{ cn }} is set to the container name
 lxc_container_config:
   debian:
-    - lxc.network.veth.pair = {{ hostvars[lxc_host].get("lxc_vethpair", "veth"+cn) }}
     - lxc.console.logfile = /var/log/lxc/{{ cn }}.console
     - lxc.autodev = 1
-    - lxc.kmsg = 0
     - lxc.start.auto = 1
     - lxc.start.order = 100
+
+lxc_default_container_config:
+    - lxc.network.veth.pair = {{ hostvars[lxc_host].get("lxc_vethpair", "veth"+cn) }}
+    - lxc.kmsg = 0
+
+lxc_default_container_config_v3:
+    - lxc.net.0.veth.pair = {{ hostvars[lxc_host].get("lxc_vethpair", "veth"+cn) }}
