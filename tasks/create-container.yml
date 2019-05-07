@@ -21,7 +21,7 @@
     - cn : '{{ hostvars[lxc_host]["container_name"] }}'
     - t: '{{ hostvars[lxc_host].get("lxc_template", lxc_template) }}'
     - to: '{{ hostvars[lxc_host].get("lxc_template_options", lxc_template_options.get(t, "")) }}'
-    - dcc: '{% if lxc_current_version is version_compare("3.0.0", "<") -%} {{ lxc_default_container_config }} {%- else -%} {{ lxc_default_container_config_v3 }} {%- endif %}'
+    - dcc: '{% if lxc_current_version is version_compare("3.0.0", "<") -%} {{ lxc_default_container_config }} {%- else -%} {{ lxc_default_container_config_v3 }} {%- endif %}' # noqa 204
     - cc: '{{ dcc + hostvars[lxc_host].get("lxc_container_config", lxc_container_config.get(t, [])) }}'
   #debug:
   #  msg: 'name: {{ cn }}, t: {{ t }}, to: {{ to }}, cc: {{ cc }}'

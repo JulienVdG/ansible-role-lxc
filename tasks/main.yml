@@ -23,7 +23,7 @@
   tags: lxc-setup
 
 - name: Get version
-  shell: 'lxc-info --version'
+  command: 'lxc-info --version'
   when: lxc_install_register is changed or lxc_current_version is undefined
   register: lxc_version_register
   tags: lxc-setup
@@ -66,10 +66,10 @@
 
 - vars:
     lxc_group_name: "{{ group_names | map('regex_search', '^'+lxc_group_prefix+'.*$') | select | list | join('') }}"
-  when: lxc_group_name != ''
+  when: lxc_group_name != '' # noqa 602
   block:
   - name: create containers
-    with_items: '{% set lxclist=[] -%} {%- for lxc_host in groups[lxc_group_name] -%} {%- if hostvars[lxc_host].get("physical_host", "") == ansible_host and hostvars[lxc_host]["container_name"] is defined -%} {{ lxclist.append(lxc_host) }} {%- endif -%} {%- endfor%}{{lxclist | list}}'
+    with_items: '{% set lxclist=[] -%} {%- for lxc_host in groups[lxc_group_name] -%} {%- if hostvars[lxc_host].get("physical_host", "") == ansible_host and hostvars[lxc_host]["container_name"] is defined -%} {{ lxclist.append(lxc_host) }} {%- endif -%} {%- endfor %}{{ lxclist | list }}' # noqa 204
     loop_control:
       loop_var: lxc_host
     include_tasks: create-container.yml
