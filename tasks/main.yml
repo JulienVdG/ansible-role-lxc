@@ -37,6 +37,13 @@
     cacheable: yes
   tags: lxc-setup
 
+- name: Install lxc3 templates
+  apt:
+    pkg:
+      - lxc-templates
+    state: present
+  when: lxc_current_version is version('3.0.0', '>=')
+
 - name: Configure lxc-net
   when: lxc_net_enable
   template:
