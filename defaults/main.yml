@@ -29,7 +29,7 @@ lxc_net:
 lxc_group_prefix: "lxchost-"
 lxc_template: "debian"
 lxc_template_options:
-  debian: "--release stretch --packages=sudo,python3"
+  debian: "--release buster --packages=sudo,python3"
 # the variable {{ cn }} is set to the container name
 lxc_container_config:
   debian:
